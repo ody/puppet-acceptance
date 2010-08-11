@@ -15,7 +15,12 @@ add_cleanup '{ test -n "${master_pid:-}" && kill "${master_pid}" ; }'
 
 mkdir -p /tmp/puppet-$$-master/manifests
 mkdir -p /tmp/puppet-$$-master/modules
-ln -s ${PWD}/../puppet-network /tmp/puppet-$$-master/modules/puppet-network
+if [ -e ${PWD}/../puppet-network/.git ]
+  then
+    ln -s ${PWD}/../puppet-network /tmp/puppet-$$-master/modules/puppet-network
+  else
+    exit ${EXIT_NOT_APPLICABLE}
+fi
 
 pconf="[master]
   modulepath=/tmp/puppet-$$-master/modules
