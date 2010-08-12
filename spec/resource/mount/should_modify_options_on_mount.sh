@@ -24,14 +24,18 @@ fi
 
 # Having puppet umount it.
 MANIFEST="mount { \"/tmp/puppet-$$-standalone/mnt/foo_fs\":
-  ensure => unmounted,
+  remounts => true,
+  options => \"ro,loop\",
+  fstype => \"ext2\",
+  ensure => mounted,
+  device => \"/tmp/puppet-$$-standalone/foo_fs\"
 }"
 
 execute_manifest<<MANIFEST_EOF
 ${MANIFEST}
 MANIFEST_EOF
 
-if ! mount | grep /tmp/puppet-$$-standalone/mnt/foo_fs
+if mount | grep /tmp/puppet-$$-standalone/mnt/foo_fs | grep "\(ro\)"
   then
     exit ${EXIT_OK}
   else
