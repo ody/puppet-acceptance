@@ -1,9 +1,11 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Author: Cody Herriges
 
 # Checks to see if Puppet's sshkey type inserted
 # a key into ssh_known_hosts.
+
+set -u
 
 source lib/setup.sh
 driver_standalone
