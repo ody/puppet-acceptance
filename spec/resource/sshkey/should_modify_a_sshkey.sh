@@ -5,6 +5,8 @@
 # Checks to see if Puppet's sshkey type modified
 # a key into ssh_known_hosts.
 
+set -u
+
 source lib/setup.sh
 driver_standalone
 
@@ -15,7 +17,7 @@ MANIFEST="sshkey { \"test\":
   host_aliases => \"foo\",
   key => \"${HOSTKEY}\",
   type => rsa,
-  target => \"/etc/ssh/ssh_known_hosts2\",
+  target => \"/tmp/puppet-$$-standalone/ssh_known_hosts2\",
   ensure => present
 }"
 
@@ -24,25 +26,25 @@ ${MANIFEST}
 MANIFEST_EOF
 
 
-if grep ${HOSTKEY} /etc/ssh/ssh_known_hosts2
+if grep ${HOSTKEY} /tmp/puppet-$$-standalone/ssh_known_hosts2
   then
     
     # A different pub key.
     HOSTKEY2=`cat /etc/ssh/ssh_host_dsa_key.pub | sed s/ssh-dsa\ // | tr -d ' '`
 
-    MANIFEST="sshkey { \"test\":
+    MANIFEST2="sshkey { \"test\":
       host_aliases => \"foo\",
       key => \"${HOSTKEY2}\",
       type => dsa,
-      target => \"/etc/ssh/ssh_known_hosts2\",
+      target => \"/tmp/puppet-$$-standalone/ssh_known_hosts2\",
       ensure => present
     }"
 
-    execute_manifest<<MANIFEST2_EOF
-    ${MANIFEST2}
-    MANIFEST2_EOF
+execute_manifest<<MANIFEST2_EOF
+${MANIFEST2}
+MANIFEST2_EOF
 
-    if grep ${HOSTKEY2} /etc/ssh/ssh_known_hosts2
+    if grep ${HOSTKEY2} /tmp/puppet-$$-standalone/ssh_known_hosts2
       then
         exit ${EXIT_OK}
       else
