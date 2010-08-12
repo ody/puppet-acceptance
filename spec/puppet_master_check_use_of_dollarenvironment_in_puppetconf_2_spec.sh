@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # Validates the use of $environment varaible used to replace the
 # need to declare environements in config files.
